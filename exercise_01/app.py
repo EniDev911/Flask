@@ -10,6 +10,10 @@ def index():
 def user(name):
 	return '<h1>Hello %s welcome to Flask</h1>' % name
 
+@app.route('/profile')
+def profile():
+	return '<h2>Welcome to profile</h2>'
+
 if __name__ == '__main__':
 	app.run(debug=True)
 	
