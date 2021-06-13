@@ -57,12 +57,12 @@ def emp_edit(id):
     
     return render_template('employees/edit.html', empleados = empleados)
 
-@app.route('/empleados/update/<int:id>', methods = ['GET','POST'])
-def emp_update(id):
+@app.route('/empleados/update', methods = ['GET','POST'])
+def emp_update():
     if request.method == 'POST':
         _nombre = request.form['nombre']
         _correo = request.form['correo']
-        _id = id
+        _id = request.form['id']
         data = (_nombre, _correo, _id)
         print(data)
         sql = "UPDATE `empleados` SET nombre = %s, correo = %s WHERE id = %s;"
