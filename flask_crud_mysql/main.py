@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
 from flaskext.mysql import MySQL
 from datetime import datetime
 import os 
@@ -29,19 +29,61 @@ def emp_index():
 
     return render_template('employees/index.html', empleados = empleados)
 
+
+
+@app.route('/empleados/destroy/<int:id>')
+def emp_destroy(id):
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
+    cursor.execute("DELETE FROM empleados WHERE id = %s", (id))
+    conn.commit()
+    return redirect('/empleados')
+
+
 @app.route('/empleados/create')
 def emp_create():
     return render_template('employees/create.html')
 
+
+@app.route('/empleados/edit/<int:id>', methods=['GET', 'POST'])
+def emp_edit(id):
+    sql = "SELECT * FROM `empleados` WHERE id = %s;"
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    cursor.execute(sql, (id))
+    empleados = cursor.fetchall()
+    print(empleados)
+    
+    return render_template('employees/edit.html', empleados = empleados)
+
+@app.route('/empleados/update/<int:id>', methods = ['GET','POST'])
+def emp_update(id):
+    if request.method == 'POST':
+        _nombre = request.form['nombre']
+        _correo = request.form['correo']
+        _id = id
+        data = (_nombre, _correo, _id)
+        print(data)
+        sql = "UPDATE `empleados` SET nombre = %s, correo = %s WHERE id = %s;"
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        cursor.execute(sql, data)
+        conn.commit()
+        print(cursor.rowcount)
+        
+    return 'algo paso'
+
 @app.route('/empleados/store', methods=['POST'])
 def emp_store():
-    _nombre = request.form['nombre']
-    _correo = request.form['correo']
-    # La foto se almacena con información binaria por ende se guarda como files
-    _foto = request.files['foto']
-    # Tomamos la línea de tiempo actual para almacenar las fotos
-    now = datetime.now()
-    tiempo = now.strftime("%Y%H%M%S")
+    if request.method == 'POST':
+        _nombre = request.form['nombre']
+        _correo = request.form['correo']
+        # La foto se almacena con información binaria por ende se guarda como files
+        _foto = request.files['foto']
+        # Tomamos la línea de tiempo actual para almacenar las fotos
+        now = datetime.now()
+        tiempo = now.strftime("%Y%H%M%S")
 
     if _foto.filename != '':
         # Concatenamos la línea de tiempo con el nombre de la foto
@@ -55,7 +97,6 @@ def emp_store():
         cursor.execute(sql, datos)
         conn.commit()
     return render_template('employees/index.html')
-
 
 
 if __name__ == '__main__':

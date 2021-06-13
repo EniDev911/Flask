@@ -1,10 +1,22 @@
-<form method="post" action="" enctype="multipart/form-data">
-    <!--Nombre-->
-    <input type="text" name="nombre" id="nombre" placeholder="Nombre"><br>
-    <!--Correo-->
-    <input type="text" name="correo" id="correo" placeholder="Correo"><br>
-    <!--Foto-->
-    <label for="foto">Foto:</label>
-    <input type="file" name="foto" id="foto"><br><br>
-    <input type="submit" value="Agregar">
-</form>
+
+
+{% for  empleado in empleados %}
+<form method="post" action="/empleados/update" enctype="multipart/form-data">
+
+    <div class="form-group">
+      <label for="formGroupExampleInput">Nombre: </label>
+      <input type="text" class="form-control" name="nombre" value="{{ empleado[1] }}">
+    </div>
+    <div class="form-group">
+      <label for="formGroupExampleInput2">Correo</label>
+      <input type="text" class="form-control" name="correo" value="{{ empleado[2] }}" >
+    </div>
+    <div class="form-group">
+      <label for="formGroupExampleInput3">Foto</label>
+      <input type="text" class="form-control" name="foto" value="{{ empleado[3] }}" >
+    </div>
+
+    <a class="btn btn-primary" href="/empleados/update/{{ empleado[0] }}">Editar</a>
+    {% endfor %}
+  
+  </form>
